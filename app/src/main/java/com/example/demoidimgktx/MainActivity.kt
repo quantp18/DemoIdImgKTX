@@ -1,6 +1,9 @@
 package com.example.demoidimgktx
 
 import android.app.ActionBar.LayoutParams
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
@@ -20,10 +23,13 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.withTranslation
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding : ActivityMainBinding
+    var isShowBitmap = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,7 +43,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewBinding.root.setOnClickListener {
-            findIndexList()
+            findIndexSecond()
+        }
+
+        viewBinding.root.setOnLongClickListener {
+            isShowBitmap = !isShowBitmap
+            val bitmap = mergeOverlaysBelowImgFg(viewBinding.main, viewBinding.imgFg)
+            if (isShowBitmap) {
+                viewBinding.imagePreview.setImageBitmap(bitmap)
+                viewBinding.imagePreview.visibility = ImageView.VISIBLE
+            } else {
+                viewBinding.imagePreview.visibility = ImageView.GONE
+            }
+            true
         }
 
         viewBinding.imgCenter.onBoxClick = { box ->
@@ -116,5 +134,53 @@ class MainActivity : AppCompatActivity() {
     }
 
     data class ImageResourceAndAngle(val resId: Int, val angle: Float)
+
+    private fun mergeOverlaysBelowImgFg(mainLayout: FrameLayout, imgFg: ImageView): Bitmap? {
+        val width = mainLayout.width
+        val height = mainLayout.height
+        if (width == 0 || height == 0) return null
+
+        val resultBitmap = createBitmap(width, height)
+        val canvas = Canvas(resultBitmap)
+
+        canvas.withTranslation(0f, 0f) {
+            drawColor(Color.WHITE)
+        }
+        // ===== 1. Vẽ các ClipTransformImageView =====
+        for (i in 0 until mainLayout.childCount) {
+            val child = mainLayout.getChildAt(i)
+
+            if (child is ClipTransformImageView) {
+                val offset = IntArray(2)
+                child.getLocationOnScreen(offset)
+
+                val layoutOffset = IntArray(2)
+                mainLayout.getLocationOnScreen(layoutOffset)
+
+                val dx = offset[0] - layoutOffset[0]
+                val dy = offset[1] - layoutOffset[1]
+
+                canvas.withTranslation(dx.toFloat(), dy.toFloat()) {
+                    child.draw(this)
+                }
+            }
+        }
+
+        // ===== 2. Vẽ imgFg cuối cùng (trên cùng) =====
+        val fgOffset = IntArray(2)
+        imgFg.getLocationOnScreen(fgOffset)
+
+        val layoutOffset = IntArray(2)
+        mainLayout.getLocationOnScreen(layoutOffset)
+
+        val dx = fgOffset[0] - layoutOffset[0]
+        val dy = fgOffset[1] - layoutOffset[1]
+
+        canvas.withTranslation(dx.toFloat(), dy.toFloat()) {
+            imgFg.draw(this)
+        }
+
+        return resultBitmap
+    }
 
 }

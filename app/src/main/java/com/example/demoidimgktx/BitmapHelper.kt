@@ -12,7 +12,7 @@ import androidx.core.graphics.createBitmap
 
 object BitmapHelper {
 
-    fun findWhiteRegion(bitmap: Bitmap): BoundingBox? {
+    fun findWhiteRegion(bitmap: Bitmap, offset: Int = 15): BoundingBox? {
         val width = bitmap.width
         val height = bitmap.height
 
@@ -23,13 +23,12 @@ object BitmapHelper {
 
         for (y in 0 until height) {
             for (x in 0 until width) {
-                val pixel = bitmap[x, y]
+                val pixel = bitmap.getPixel(x, y)
                 val r = (pixel shr 16) and 0xFF
                 val g = (pixel shr 8) and 0xFF
                 val b = pixel and 0xFF
 
                 val isWhite = r > 200 && g > 200 && b > 200
-
                 if (isWhite) {
                     if (x < left) left = x
                     if (x > right) right = x
@@ -40,11 +39,17 @@ object BitmapHelper {
         }
 
         return if (left <= right && top <= bottom) {
-            BoundingBox(Rect(left, top, right, bottom))
+            val adjustedLeft = (left - offset).coerceAtLeast(0)
+            val adjustedTop = (top - offset).coerceAtLeast(0)
+            val adjustedRight = (right + offset).coerceAtMost(width - 1)
+            val adjustedBottom = (bottom + offset).coerceAtMost(height - 1)
+
+            BoundingBox(Rect(adjustedLeft, adjustedTop, adjustedRight, adjustedBottom))
         } else {
             null
         }
     }
+
 
     fun scaleBoundingBox(
         box: BoundingBox,
