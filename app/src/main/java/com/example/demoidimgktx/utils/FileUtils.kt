@@ -16,7 +16,7 @@ object FileUtils {
 
             Log.e("TAG", "readAllFramesMeta: ${folders.size}", )
             for (folder in folders) {
-                val path = "data/$folder/frames_info.json.json"
+                val path = "data/$folder/frames_info.json"
                 val jsonStr = assetManager.open(path).bufferedReader().use { it.readText() }
                 val foregroundPath = findForegroundPath(assetManager, "data/$folder")
                 val meta = parseFramesMeta(jsonStr).copy(foregroundPath = foregroundPath ?: return emptyList())
