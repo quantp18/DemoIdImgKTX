@@ -1,4 +1,4 @@
-package com.example.demoidimgktx
+package com.example.demoidimgktx.custom_view
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -43,15 +43,41 @@ class ClipTransformImageView @JvmOverloads constructor(
         isFocusable = true
     }
 
+//    fun setLimitRect(rect: RectF) {
+//        limitRect.set(rect)
+//        drawable?.let {
+//            imageRect.set(0f, 0f, it.intrinsicWidth.toFloat(), it.intrinsicHeight.toFloat())
+//
+//            // Tính scale ban đầu để ảnh fit vào limitRect
+//            val scale = minOf(limitRect.width() / imageRect.width(), limitRect.height() / imageRect.height())
+//
+//            // Thiết lập minScale là 0.5 so với kích thước gốc
+//            minScale = 0.5f
+//
+//            drawMatrix.reset()
+//            drawMatrix.setScale(scale, scale)
+//
+//            // Căn giữa ảnh trong limitRect
+//            val dx = limitRect.left + (limitRect.width() - imageRect.width() * scale) / 2f
+//            val dy = limitRect.top + (limitRect.height() - imageRect.height() * scale) / 2f
+//            drawMatrix.postTranslate(dx, dy)
+//
+//            imageMatrix = drawMatrix
+//            invalidate()
+//        }
+//    }
+
     fun setLimitRect(rect: RectF) {
         limitRect.set(rect)
         drawable?.let {
             imageRect.set(0f, 0f, it.intrinsicWidth.toFloat(), it.intrinsicHeight.toFloat())
 
-            // Tính scale ban đầu để ảnh fit vào limitRect
-            val scale = minOf(limitRect.width() / imageRect.width(), limitRect.height() / imageRect.height())
+            // Scale để ảnh bao phủ toàn bộ limitRect theo cạnh lớn
+            val scale = maxOf(
+                limitRect.width() / imageRect.width(),
+                limitRect.height() / imageRect.height()
+            )
 
-            // Thiết lập minScale là 0.5 so với kích thước gốc
             minScale = 0.5f
 
             drawMatrix.reset()
@@ -66,6 +92,7 @@ class ClipTransformImageView @JvmOverloads constructor(
             invalidate()
         }
     }
+
 
     fun setImageWithLimitRect(resId: Int, rect: RectF) {
         setImageResource(resId)

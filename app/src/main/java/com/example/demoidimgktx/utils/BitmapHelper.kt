@@ -1,4 +1,4 @@
-package com.example.demoidimgktx
+package com.example.demoidimgktx.utils
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -7,8 +7,8 @@ import android.graphics.Matrix
 import android.graphics.Rect
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.get
 import androidx.core.graphics.createBitmap
+import com.example.demoidimgktx.BoundingBox
 
 object BitmapHelper {
 

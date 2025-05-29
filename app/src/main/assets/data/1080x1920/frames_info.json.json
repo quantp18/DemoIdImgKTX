@@ -1,0 +1,26 @@
+{
+  "width": 1080,
+  "height": 1920,
+  "frameList": [
+    {
+      "x": 547,
+      "y": 60,
+      "width": 491,
+      "height": 559
+    },
+    {
+      "x": 446,
+      "y": 669,
+      "width": 522,
+      "height": 591,
+      "rotation" : -11
+    },
+    {
+      "x": 513,
+      "y": 1221,
+      "width": 582,
+      "height": 659,
+      "rotation" : 15
+    }
+  ]
+}

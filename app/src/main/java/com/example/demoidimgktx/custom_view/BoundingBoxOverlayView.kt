@@ -1,4 +1,4 @@
-package com.example.demoidimgktx
+package com.example.demoidimgktx.custom_view
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,6 +9,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.example.demoidimgktx.BoundingBox
 
 class BoundingBoxOverlayView @JvmOverloads constructor(
     context: Context,
