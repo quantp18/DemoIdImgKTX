@@ -3,22 +3,25 @@
   "height": 1920,
   "frameList": [
     {
-      "x": 547,
+      "x": 549,
       "y": 60,
       "width": 491,
-      "height": 559
+      "height": 559,
+      "rotation": 7.20
     },
     {
       "x": 446,
-      "y": 669,
+      "y": 670,
       "width": 522,
-      "height": 591
+      "height": 591,
+      "rotation": -10.98
     },
     {
       "x": 513,
-      "y": 1221,
+      "y": 1222,
       "width": 577,
-      "height": 644
+      "height": 644,
+      "rotation": 15.15
     }
   ]
 }
