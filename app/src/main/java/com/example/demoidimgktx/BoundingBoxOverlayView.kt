@@ -1,18 +1,23 @@
 package com.example.demoidimgktx
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.widget.FrameLayout
+import kotlin.math.min
 
 class BoundingBoxOverlayView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-) : View(context, attrs) {
+) : FrameLayout(context, attrs) {
     val tolerance = 5f * resources.displayMetrics.density
     var onBoxClick: ((BoundingBox) -> Unit)? = null
     private val boundingBoxes = mutableListOf<BoundingBox>()
@@ -56,8 +61,9 @@ class BoundingBoxOverlayView @JvmOverloads constructor(
         invalidate()
     }
 
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
+
         for (box in boundingBoxes) {
             canvas.drawRect(
                 box.rect.left.toFloat(),
@@ -68,6 +74,19 @@ class BoundingBoxOverlayView @JvmOverloads constructor(
             )
         }
     }
+
+//    override fun onDraw(canvas: Canvas) {
+//        super.onDraw(canvas)
+//        for (box in boundingBoxes) {
+//            canvas.drawRect(
+//                box.rect.left.toFloat(),
+//                box.rect.top.toFloat(),
+//                box.rect.right.toFloat(),
+//                box.rect.bottom.toFloat(),
+//                paint
+//            )
+//        }
+//    }
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
             val x = event.x

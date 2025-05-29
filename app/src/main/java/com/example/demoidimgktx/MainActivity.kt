@@ -1,9 +1,12 @@
 package com.example.demoidimgktx
 
+import android.app.ActionBar.LayoutParams
+import android.graphics.RectF
 import android.os.Bundle
 import android.util.Log
 import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -34,22 +37,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewBinding.root.setOnClickListener {
-//            val bitmap = BitmapHelper.getBitmapFromVectorDrawable(context = this, drawableResId = R.drawable.temp1_index1)
-//            Log.e("BitmapHelper", "convert Resource to bitmap => success: ${bitmap!=null}")
-//            val findBoundingBox = BitmapHelper.findWhiteRegion(bitmap)
-//            Log.e("BitmapHelper", "findBoundingBox => ${gson.toJson(findBoundingBox)}")
             findIndexList()
         }
 
         viewBinding.imgCenter.onBoxClick = { box ->
-            val icon = ImageView(this).apply {
+            val clipView = ClipTransformImageView(this).apply {
                 setImageResource(R.drawable.ic_launcher_background)
-                layoutParams = FrameLayout.LayoutParams(100, 100).apply {
-                    leftMargin = box.rect.left.toInt()
-                    topMargin = box.rect.top.toInt()
+                setLimitRect(RectF(0f, 0f, box.rect.width().toFloat(), box.rect.height().toFloat()))
+                layoutParams = LayoutParams(box.rect.width(), box.rect.height()).apply {
+                    leftMargin = box.rect.left
+                    topMargin = box.rect.top
                 }
+//                scaleType = ImageView.ScaleType.CENTER_CROP
             }
-            (viewBinding.main as FrameLayout).addView(icon)
+            (viewBinding.main as FrameLayout).addView(clipView)
+            Toast.makeText(this, "Add View", Toast.LENGTH_SHORT).show()
         }
     }
 
