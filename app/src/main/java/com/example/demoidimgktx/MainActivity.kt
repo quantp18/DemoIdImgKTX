@@ -86,6 +86,10 @@ class MainActivity : AppCompatActivity() {
             Log.e("TAG", "Added Clip View ${clipView.z} $index")
         }
 
+        viewBinding.button.setOnClickListener {
+            viewBinding.imgCenter.swapHighlightState()
+        }
+
     }
 
     fun findIndexNew() {

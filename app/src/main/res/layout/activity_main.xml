@@ -8,18 +8,11 @@
     tools:context=".MainActivity">
 
 
-    <com.example.demoidimgktx.custom_view.FrameOverlayView
-        android:id="@+id/imgCenter"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/black"/>
-
     <ImageView
         android:id="@+id/imgFg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"
-        android:alpha="1"
         android:translationZ="10dp"
         android:adjustViewBounds="true"/>
 
@@ -33,4 +26,20 @@
         android:adjustViewBounds="true"
         android:translationZ="10dp"
         app:srcCompat="@drawable/ic_launcher_background" />
+
+
+    <com.example.demoidimgktx.custom_view.FrameOverlayViewNew
+        android:id="@+id/imgCenter"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:translationZ="10dp"/>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        android:layout_gravity="bottom|center"
+        android:translationZ="10dp"/>
+
 </FrameLayout>
