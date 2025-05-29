@@ -67,6 +67,28 @@ class ClipTransformImageView @JvmOverloads constructor(
         }
     }
 
+    fun setImageWithLimitRect(resId: Int, rect: RectF) {
+        setImageResource(resId)
+
+        // Chờ drawable sẵn sàng (tránh scale sai do intrinsicWidth = 0)
+        post {
+            val d = drawable
+            if (d != null && d.intrinsicWidth > 0 && d.intrinsicHeight > 0) {
+                setLimitRect(rect)
+            } else {
+                // Fallback: delay thêm 1 frame
+                postDelayed({
+                    drawable?.let {
+                        if (it.intrinsicWidth > 0 && it.intrinsicHeight > 0) {
+                            setLimitRect(rect)
+                        }
+                    }
+                }, 16) // khoảng 1 frame (60fps)
+            }
+        }
+    }
+
+
     override fun onDraw(canvas: Canvas) {
         canvas.withClip(limitRect) {
             imageMatrix = drawMatrix
