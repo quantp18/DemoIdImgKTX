@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:adjustViewBounds="true"
-        android:alpha="0.1"
         android:scaleType="fitCenter"
         android:translationZ="10dp" />
 

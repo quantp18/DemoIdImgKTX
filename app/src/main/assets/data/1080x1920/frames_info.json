@@ -3,25 +3,39 @@
   "height": 1920,
   "frameList": [
     {
-      "x": 576,
-      "y": 81,
-      "width": 432,
-      "height": 513,
-      "rotation": 7.20
+      "x": 78,
+      "y": 454,
+      "width": 423,
+      "height": 405,
+      "rotation": 3.09
     },
     {
-      "x": 490,
-      "y": 705,
-      "width": 433,
-      "height": 519,
-      "rotation": -10.98
+      "x": 138,
+      "y": 997,
+      "width": 497,
+      "height": 455,
+      "rotation": 3.09
     },
     {
-      "x": 575,
-      "y": 1266,
-      "width": 461,
-      "height": 548,
-      "rotation": 15.15
+      "x": 610,
+      "y": 898,
+      "width": 473,
+      "height": 458,
+      "rotation": -8.51
+    },
+    {
+      "x": 523,
+      "y": 1289,
+      "width": 392,
+      "height": 376,
+      "rotation": -8.51
+    },
+    {
+      "x": 446,
+      "y": 214,
+      "width": 552,
+      "height": 532,
+      "rotation": 13.59
     }
   ]
 }

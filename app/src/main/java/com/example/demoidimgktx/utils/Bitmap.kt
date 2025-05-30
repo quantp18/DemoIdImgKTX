@@ -30,18 +30,21 @@ fun mergeOverlaysBelowImgFg(mainLayout: FrameLayout, imgFg: ImageView): Bitmap? 
         val canvas = Canvas(this)
         canvas.drawColor(Color.WHITE)
 
-        for (i in 0 until mainLayout.childCount) {
-            val child = mainLayout.getChildAt(i)
-            if (child is ClipTransformImageView) {
-                val childOffset = IntArray(2).apply { child.getLocationOnScreen(this) }
-                val dx = (childOffset[0] - fgOffset[0] - bounds.left) * scaleX
-                val dy = (childOffset[1] - fgOffset[1] - bounds.top) * scaleY
+        // Sắp xếp theo zIndex tăng dần (để vẽ từ dưới lên)
+        val sortedChildren = (0 until mainLayout.childCount)
+            .map { mainLayout.getChildAt(it) }
+            .filterIsInstance<ClipTransformImageView>()
+            .sortedBy { it.z }
 
-                canvas.withTranslation(dx, dy) {
-                    withScale(scaleX, scaleY) {
-                        withRotation(child.rotation) {
-                            child.draw(this)
-                        }
+        for (child in sortedChildren) {
+            val childOffset = IntArray(2).apply { child.getLocationOnScreen(this) }
+            val dx = (childOffset[0] - fgOffset[0] - bounds.left) * scaleX
+            val dy = (childOffset[1] - fgOffset[1] - bounds.top) * scaleY
+
+            canvas.withTranslation(dx, dy) {
+                withScale(scaleX, scaleY) {
+                    withRotation(child.rotation) {
+                        child.draw(this)
                     }
                 }
             }
@@ -53,6 +56,7 @@ fun mergeOverlaysBelowImgFg(mainLayout: FrameLayout, imgFg: ImageView): Bitmap? 
         }
     }
 }
+
 
 private fun getImageDisplayedRect(imageView: ImageView): RectF {
     val drawable = imageView.drawable ?: return RectF()

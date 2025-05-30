@@ -93,17 +93,17 @@ class MainActivity : AppCompatActivity() {
             viewBinding.imgCenter.setFrameInfos(scaledFrames)
         }
 
-        viewBinding.root.setOnLongClickListener {
-            isShowBitmap = !isShowBitmap
-            mergeOverlaysBelowImgFg(viewBinding.main, viewBinding.imgFg)?.let { bitmap ->
-                viewBinding.imagePreview.apply {
-                    setImageBitmap(bitmap)
-                    scaleType = ImageView.ScaleType.FIT_CENTER
-                    visibility = if (isShowBitmap) ImageView.VISIBLE else ImageView.GONE
-                }
-            }
-            true
-        }
+//        viewBinding.root.setOnLongClickListener {
+//            isShowBitmap = !isShowBitmap
+//            mergeOverlaysBelowImgFg(viewBinding.main, viewBinding.imgFg)?.let { bitmap ->
+//                viewBinding.imagePreview.apply {
+//                    setImageBitmap(bitmap)
+//                    scaleType = ImageView.ScaleType.FIT_CENTER
+//                    visibility = if (isShowBitmap) ImageView.VISIBLE else ImageView.GONE
+//                }
+//            }
+//            true
+//        }
 
         viewBinding.button.text = "Swap"
         viewBinding.button.setOnClickListener {
@@ -118,8 +118,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewBinding.btnSave.setOnClickListener {
+            val time = System.currentTimeMillis()
             mergeOverlaysBelowImgFg(viewBinding.main, viewBinding.imgFg)?.let { bitmap ->
                 FileUtils.saveBitmapToFile(context = this, bitmap = bitmap)
+                Log.e("TAG", "onCreate: ==> ${System.currentTimeMillis() - time}")
             }
         }
 
@@ -192,7 +194,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadMetaAndImage() {
         timeLoad = System.currentTimeMillis()
-        frameMeta = FileUtils.readAllFramesMeta(this)[1].also {
+        frameMeta = FileUtils.readAllFramesMeta(this)[2].also {
             Log.d("MainActivity", "Loaded meta: ${gson.toJson(it)}")
         }
 
@@ -244,7 +246,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewBinding.imgCenter.registerFrameListener(frameOverlayViewNewListener!!)
+        frameOverlayViewNewListener?.let { viewBinding.imgCenter.registerFrameListener(it) }
     }
 
     override fun onPause() {
