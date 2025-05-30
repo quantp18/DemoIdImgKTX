@@ -4,6 +4,7 @@ data class FrameInfo(
     val x: Float,
     val y: Float,
     val rotation : Float = 0F,
+    val scale : Float = 0F,
     val width: Float,
     val height: Float,
     val haveImage : Boolean = false,

@@ -16,6 +16,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.demoidimgktx.custom_view.ClipTransformImageView
+import com.example.demoidimgktx.custom_view.ClipTransformImageViewListener
 import com.example.demoidimgktx.custom_view.FrameOverlayViewNewListener
 import com.example.demoidimgktx.databinding.ActivityMainBinding
 import com.example.demoidimgktx.model.FrameContent
@@ -40,9 +41,10 @@ class MainActivity : AppCompatActivity() {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private var frameMeta: FramesMeta? = null
     private var pickMediaLauncher: ActivityResultLauncher<String>? = null
-    private val frameContentList = mutableListOf<FrameContent>()
+    private val frameContentList = mutableMapOf<Int, FrameContent>()
 
     private var frameOverlayViewNewListener: FrameOverlayViewNewListener? = null
+    private var clipTransformImageView : ClipTransformImageViewListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +57,58 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        createListener()
+        loadMetaAndImage()
+
+        viewBinding.btnSetFrames.setOnClickListener {
+            val scaledFrames = drawScaledBoundingFrames(
+                frameMeta = frameMeta,
+                actualWidth = viewBinding.imgFg.width.toFloat(),
+                actualHeight = viewBinding.imgFg.height.toFloat()
+            )
+            frameMeta = frameMeta?.copy(frameList = scaledFrames)
+            Log.e("TAG", "btnSetFrames: ${scaledFrames.size}")
+            viewBinding.imgCenter.setFrameInfos(scaledFrames)
+        }
+        viewBinding.button.text = "Swap"
+        viewBinding.button.setOnClickListener {
+            viewBinding.imgCenter.swapHighlightState()
+        }
+        viewBinding.btnReplaceImage.setOnClickListener {
+            isReplacing = true
+            onSelectFromGallery()
+        }
+        viewBinding.btnDelete.setOnClickListener {
+            handleDeleteImage()
+        }
+
+        viewBinding.btnSave.setOnClickListener {
+            val time = System.currentTimeMillis()
+            mergeOverlaysBelowImgFg(viewBinding.main, viewBinding.imgFg)?.let { bitmap ->
+                FileUtils.saveBitmapToFile(context = this, bitmap = bitmap)
+                Log.e("TAG", "onCreate: ==> ${System.currentTimeMillis() - time}")
+            }
+        }
+
+        viewBinding.btnRotate.setOnClickListener {
+            viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
+                val index = frameInfo.index
+                val clipTransformImageView = frameContentList[index]?.clipTransformImageView
+                clipTransformImageView?.rotateView()
+            }
+        }
+
+        viewBinding.btnFlip.setOnClickListener {
+            viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
+                val index = frameInfo.index
+                val clipTransformImageView = frameContentList[index]?.clipTransformImageView
+                clipTransformImageView?.flipView()
+            }
+        }
+    }
+
+    private fun createListener() {
 
         pickMediaLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             Log.e("TAG", "pickMediaLauncher: $uri")
@@ -79,65 +133,36 @@ class MainActivity : AppCompatActivity() {
             override fun onTouchOutBox() {
                 Log.e("frameOverlayViewNewListener", "onTouchOutBox: ")
             }
-        }
 
-        loadMetaAndImage()
+            override fun onDragIconBox(rotation: Float, scale: Float) {
+                TODO("Not yet implemented")
+            }
 
-        viewBinding.btnSetFrames.setOnClickListener {
-            val scaledFrames = drawScaledBoundingFrames(
-                frameMeta = frameMeta,
-                actualWidth = viewBinding.imgFg.width.toFloat(),
-                actualHeight = viewBinding.imgFg.height.toFloat()
-            )
-            Log.e("TAG", "btnSetFrames: ${scaledFrames.size}")
-            viewBinding.imgCenter.setFrameInfos(scaledFrames)
-        }
-
-//        viewBinding.root.setOnLongClickListener {
-//            isShowBitmap = !isShowBitmap
-//            mergeOverlaysBelowImgFg(viewBinding.main, viewBinding.imgFg)?.let { bitmap ->
-//                viewBinding.imagePreview.apply {
-//                    setImageBitmap(bitmap)
-//                    scaleType = ImageView.ScaleType.FIT_CENTER
-//                    visibility = if (isShowBitmap) ImageView.VISIBLE else ImageView.GONE
+//            override fun onDragIconBox(mIndex : Int, rotation: Float, scale: Float) {
+//                Log.e("frameOverlayViewNewListener", "onTouchOutBox: ")
+//
+//                frameContentList[mIndex]?.clipTransformImageView?.updateRotateAndScale(rotation, scale)
+//
+//                if (frameMeta?.frameList != null) {
+//                    val updatedFrameList = frameMeta!!.frameList.toMutableList()
+//                    updatedFrameList[mIndex] = updatedFrameList[mIndex].copy(rotation = rotation, scale = scale)
+//                    frameMeta = frameMeta?.copy(frameList = updatedFrameList)
+//                    viewBinding.imgCenter.setFrameInfos(frameMeta!!.frameList)
 //                }
+//                val clipTransformImageView = frameContentList[mIndex]?.clipTransformImageView
+//                clipTransformImageView?.updateRotateAndScale(rotation, scale)
 //            }
-//            true
-//        }
-
-        viewBinding.button.text = "Swap"
-        viewBinding.button.setOnClickListener {
-            viewBinding.imgCenter.swapHighlightState()
-        }
-        viewBinding.btnReplaceImage.setOnClickListener {
-            isReplacing = true
-            onSelectFromGallery()
-        }
-        viewBinding.btnDelete.setOnClickListener {
-            handleDeleteImage()
         }
 
-        viewBinding.btnSave.setOnClickListener {
-            val time = System.currentTimeMillis()
-            mergeOverlaysBelowImgFg(viewBinding.main, viewBinding.imgFg)?.let { bitmap ->
-                FileUtils.saveBitmapToFile(context = this, bitmap = bitmap)
-                Log.e("TAG", "onCreate: ==> ${System.currentTimeMillis() - time}")
-            }
-        }
+        clipTransformImageView = object : ClipTransformImageViewListener{
 
-        viewBinding.btnRotate.setOnClickListener {
-            viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
-                val index = frameInfo.index
-                val clipTransformImageView = frameContentList[index].clipTransformImageView
-                clipTransformImageView.rotateView()
-            }
-        }
-
-        viewBinding.btnFlip.setOnClickListener {
-            viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
-                val index = frameInfo.index
-                val clipTransformImageView = frameContentList[index].clipTransformImageView
-                clipTransformImageView.flipView()
+            override fun translateAndScaleSuccess(frameInfo: FrameInfo, rotate: Float, scale: Float) {
+//                viewBinding.imgCenter.updateFrameInfo(rotation, scale)
+                viewBinding.imgCenter.setFrameInfos(
+                    viewBinding.imgCenter.getFrameInfos().map {
+                        if (it.index == frameInfo.index) it.copy(rotation = rotate, scale = scale) else it
+                    }
+                )
             }
         }
     }
@@ -145,33 +170,17 @@ class MainActivity : AppCompatActivity() {
     fun handleSwapHighlight(indexImageA: Int, indexImageB: Int) {
         val frameContentA = frameContentList[indexImageA]
         val frameContentB = frameContentList[indexImageB]
-        val clipTransformImageViewA = frameContentA.clipTransformImageView
-        val clipTransformImageViewB = frameContentB.clipTransformImageView
+        val clipTransformImageViewA = frameContentA?.clipTransformImageView ?: return
+        val clipTransformImageViewB = frameContentB?.clipTransformImageView ?: return
 
         val imagePathA = frameContentA.path
         val imagePathB = frameContentB.path
 
-        frameContentList[indexImageA] = frameContentList[indexImageA].copy(path = imagePathB)
-        frameContentList[indexImageB] = frameContentList[indexImageB].copy(path = imagePathA)
+        frameContentList[indexImageA] = frameContentA.copy(path = imagePathB)
+        frameContentList[indexImageB] = frameContentB.copy(path = imagePathA)
 
         runCatching { clipTransformImageViewA.setImageBitmap(BitmapFactory.decodeFile(imagePathB)) }
         runCatching { clipTransformImageViewB.setImageBitmap(BitmapFactory.decodeFile(imagePathA)) }
-    }
-
-    private fun addFrame(frameInfo: FrameInfo) {
-        val index = frameInfo.index
-        val clipView = ClipTransformImageView(this).apply {
-            setImageResource(R.drawable.banner_enhance)
-            setLimitRect(RectF(0f, 0f, frameInfo.width, frameInfo.height))
-            layoutParams = FrameLayout.LayoutParams(frameInfo.width.toInt(), frameInfo.height.toInt()).apply {
-                leftMargin = frameInfo.x.toInt()
-                topMargin = frameInfo.y.toInt()
-            }
-            z = (10f + index) / 10f
-            rotation = frameInfo.rotation
-        }
-        viewBinding.main.addView(clipView)
-        Log.d("MainActivity", "Added ClipTransformImageView at index $index")
     }
 
     private fun addFrameByFile(frameInfo: FrameInfo, file: File) {
@@ -185,9 +194,10 @@ class MainActivity : AppCompatActivity() {
             }
             z = (10f + index) / 10f
             rotation = frameInfo.rotation
+            clipTransformImageView?.let { registerListener(transformListener = it) }
             setLimitRect(RectF(0f, 0f, frameInfo.width, frameInfo.height))
         }
-        frameContentList.add(FrameContent(frameInfo, clipView, file.path))
+        frameContentList[index] = (FrameContent(frameInfo, clipView, file.path))
         viewBinding.main.addView(clipView)
         Log.d("MainActivity", "Added ClipTransformImageView at index $index")
     }
@@ -237,9 +247,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun deleteByIndex(indexImage: Int) {
-        val frameContent = frameContentList[indexImage]
+        val frameContent = try {
+            frameContentList[indexImage]
+        }catch (e: Exception){
+            e.printStackTrace()
+            null
+        }
+        if (frameContent == null) return
         viewBinding.main.removeView(frameContent.clipTransformImageView)
-        frameContentList.remove(frameContent)
+        frameContentList.remove(frameContent.frameInfo.index)
         FileUtils.deleteFile(frameContent.path)
         viewBinding.imgCenter.updateHaveImage(haveImage = false, index = indexImage)
     }
@@ -251,7 +267,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        viewBinding.imgCenter.unregisterFrameListener()
     }
 
     override fun onDestroy() {
