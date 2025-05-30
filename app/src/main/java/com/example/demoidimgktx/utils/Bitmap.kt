@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.RectF
+import android.os.Build
 import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.core.graphics.createBitmap
@@ -76,4 +77,17 @@ fun drawScaledBoundingFrames(frameMeta : FramesMeta?, actualWidth : Float, actua
         )
     }
     return scaledFrames
+}
+
+
+fun getFormatCompress(isHaveAlpha : Boolean): Bitmap.CompressFormat {
+    return if (isHaveAlpha) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            Bitmap.CompressFormat.WEBP_LOSSLESS
+        }else{
+            Bitmap.CompressFormat.PNG
+        }
+    } else{
+        Bitmap.CompressFormat.JPEG
+    }
 }

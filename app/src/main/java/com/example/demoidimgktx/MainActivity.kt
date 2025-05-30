@@ -14,6 +14,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.demoidimgktx.custom_view.ClipTransformImageView
 import com.example.demoidimgktx.custom_view.FrameOverlayViewNewListener
 import com.example.demoidimgktx.databinding.ActivityMainBinding
@@ -24,6 +25,9 @@ import com.example.demoidimgktx.utils.FileUtils
 import com.example.demoidimgktx.utils.drawScaledBoundingFrames
 import com.example.demoidimgktx.utils.mergeOverlaysBelowImgFg
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
@@ -31,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityMainBinding
 
     private var isShowBitmap = false
+    private var isReplacing = false
     private var timeLoad = 0L
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private var frameMeta: FramesMeta? = null
@@ -104,6 +109,19 @@ class MainActivity : AppCompatActivity() {
         viewBinding.button.setOnClickListener {
             viewBinding.imgCenter.swapHighlightState()
         }
+        viewBinding.btnReplaceImage.setOnClickListener {
+            isReplacing = true
+            onSelectFromGallery()
+        }
+        viewBinding.btnDelete.setOnClickListener {
+            handleDeleteImage()
+        }
+
+        viewBinding.btnSave.setOnClickListener {
+            mergeOverlaysBelowImgFg(viewBinding.main, viewBinding.imgFg)?.let { bitmap ->
+                FileUtils.saveBitmapToFile(context = this, bitmap = bitmap)
+            }
+        }
     }
 
     fun handleSwapHighlight(indexImageA: Int, indexImageB: Int) {
@@ -158,7 +176,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadMetaAndImage() {
         timeLoad = System.currentTimeMillis()
-        frameMeta = FileUtils.readAllFramesMeta(this)[2].also {
+        frameMeta = FileUtils.readAllFramesMeta(this)[1].also {
             Log.d("MainActivity", "Loaded meta: ${gson.toJson(it)}")
         }
 
@@ -182,11 +200,30 @@ class MainActivity : AppCompatActivity() {
             FileUtils.copyImageFileFromUri(this, uri)?.let { mFile ->
                 if (!mFile.exists()) return
                 viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
+                    if (isReplacing){
+                        deleteByIndex(frameInfo.index)
+                    }
                     addFrameByFile(frameInfo, mFile)
                     viewBinding.imgCenter.updateHaveImage(haveImage = true, index = frameInfo.index)
                 }
             }
         }
+        isReplacing = false
+    }
+
+    private fun handleDeleteImage() {
+        viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
+            deleteByIndex(frameInfo.index)
+        }
+
+    }
+
+    private fun deleteByIndex(indexImage: Int) {
+        val frameContent = frameContentList[indexImage]
+        viewBinding.main.removeView(frameContent.clipTransformImageView)
+        frameContentList.remove(frameContent)
+        FileUtils.deleteFile(frameContent.path)
+        viewBinding.imgCenter.updateHaveImage(haveImage = false, index = indexImage)
     }
 
     override fun onResume() {
@@ -200,6 +237,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        CoroutineScope(Dispatchers.IO).launch {
+            FileUtils.deleteImageTemp(context = this@MainActivity)
+        }
         frameOverlayViewNewListener = null
         super.onDestroy()
     }
