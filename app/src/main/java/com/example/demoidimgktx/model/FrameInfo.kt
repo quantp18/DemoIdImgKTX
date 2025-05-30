@@ -5,7 +5,9 @@ data class FrameInfo(
     val y: Float,
     val rotation : Float = 0F,
     val width: Float,
-    val height: Float
+    val height: Float,
+    val haveImage : Boolean = false,
+    val index : Int = -1
 )
 
 data class FramesMeta(

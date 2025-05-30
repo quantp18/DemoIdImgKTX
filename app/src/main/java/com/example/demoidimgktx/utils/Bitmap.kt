@@ -65,13 +65,14 @@ fun drawScaledBoundingFrames(frameMeta : FramesMeta?, actualWidth : Float, actua
     val scaleX = actualWidth / meta.width
     val scaleY = actualHeight / meta.height
 
-    val scaledFrames = meta.frameList.map { frame ->
+    val scaledFrames = meta.frameList.mapIndexed { index, frame ->
         FrameInfo(
             x = frame.x * scaleX,
             y = frame.y * scaleY,
             rotation = frame.rotation,
             width = frame.width * scaleX,
-            height = frame.height * scaleY
+            height = frame.height * scaleY,
+            index = index
         )
     }
     return scaledFrames

@@ -13,6 +13,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 import androidx.core.graphics.withClip
+import com.example.demoidimgktx.model.FrameInfo
 
 class ClipTransformImageView @JvmOverloads constructor(
     context: Context,
@@ -42,30 +43,6 @@ class ClipTransformImageView @JvmOverloads constructor(
         isClickable = true
         isFocusable = true
     }
-
-//    fun setLimitRect(rect: RectF) {
-//        limitRect.set(rect)
-//        drawable?.let {
-//            imageRect.set(0f, 0f, it.intrinsicWidth.toFloat(), it.intrinsicHeight.toFloat())
-//
-//            // Tính scale ban đầu để ảnh fit vào limitRect
-//            val scale = minOf(limitRect.width() / imageRect.width(), limitRect.height() / imageRect.height())
-//
-//            // Thiết lập minScale là 0.5 so với kích thước gốc
-//            minScale = 0.5f
-//
-//            drawMatrix.reset()
-//            drawMatrix.setScale(scale, scale)
-//
-//            // Căn giữa ảnh trong limitRect
-//            val dx = limitRect.left + (limitRect.width() - imageRect.width() * scale) / 2f
-//            val dy = limitRect.top + (limitRect.height() - imageRect.height() * scale) / 2f
-//            drawMatrix.postTranslate(dx, dy)
-//
-//            imageMatrix = drawMatrix
-//            invalidate()
-//        }
-//    }
 
     fun setLimitRect(rect: RectF) {
         limitRect.set(rect)

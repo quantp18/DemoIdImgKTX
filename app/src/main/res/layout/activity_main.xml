@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"
         android:translationZ="10dp"
+        android:alpha="0.1"
         android:adjustViewBounds="true"/>
 
     <ImageView
@@ -40,6 +41,13 @@
         android:layout_height="wrap_content"
         android:text="Button"
         android:layout_gravity="bottom|center"
-        android:translationZ="10dp"/>
+        android:translationZ="11dp"/>
+    <Button
+        android:id="@+id/btnSetFrames"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Frames"
+        android:layout_gravity="bottom|start"
+        android:translationZ="11dp"/>
 
 </FrameLayout>
