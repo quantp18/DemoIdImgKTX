@@ -6,6 +6,7 @@ import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
 import kotlin.math.atan2
@@ -44,16 +45,24 @@ class ClipTransformImageView @JvmOverloads constructor(
         isFocusable = true
     }
 
-    fun setLimitRect(rect: RectF) {
+    fun setLimitRect(rect: RectF, scaleType: ScaleType = ScaleType.CENTER_CROP
+    ) {
         limitRect.set(rect)
         drawable?.let {
             imageRect.set(0f, 0f, it.intrinsicWidth.toFloat(), it.intrinsicHeight.toFloat())
 
-            // Scale để ảnh bao phủ toàn bộ limitRect theo cạnh lớn
-            val scale = maxOf(
-                limitRect.width() / imageRect.width(),
-                limitRect.height() / imageRect.height()
-            )
+            // Tính scale để ảnh nằm gọn trong limitRect
+            val scale = if (scaleType == ScaleType.FIT_CENTER){
+                minOf(
+                    limitRect.width() / imageRect.width(),
+                    limitRect.height() / imageRect.height()
+                )
+            }else{
+                maxOf(
+                    limitRect.width() / imageRect.width(),
+                    limitRect.height() / imageRect.height()
+                )
+            }
 
             minScale = 0.5f
 
@@ -69,29 +78,6 @@ class ClipTransformImageView @JvmOverloads constructor(
             invalidate()
         }
     }
-
-
-    fun setImageWithLimitRect(resId: Int, rect: RectF) {
-        setImageResource(resId)
-
-        // Chờ drawable sẵn sàng (tránh scale sai do intrinsicWidth = 0)
-        post {
-            val d = drawable
-            if (d != null && d.intrinsicWidth > 0 && d.intrinsicHeight > 0) {
-                setLimitRect(rect)
-            } else {
-                // Fallback: delay thêm 1 frame
-                postDelayed({
-                    drawable?.let {
-                        if (it.intrinsicWidth > 0 && it.intrinsicHeight > 0) {
-                            setLimitRect(rect)
-                        }
-                    }
-                }, 16) // khoảng 1 frame (60fps)
-            }
-        }
-    }
-
 
     override fun onDraw(canvas: Canvas) {
         canvas.withClip(limitRect) {
@@ -224,4 +210,18 @@ class ClipTransformImageView @JvmOverloads constructor(
         val b = values[Matrix.MSKEW_X]
         return sqrt(a * a + b * b) // Tính scale thực sự
     }
+
+    fun rotateView() {
+        drawMatrix.postRotate(90f, limitRect.centerX(), limitRect.centerY())
+        imageMatrix = drawMatrix
+        invalidate()
+    }
+
+    fun flipView() {
+        drawMatrix.postScale(-1f, 1f, limitRect.centerX(), limitRect.centerY())
+        imageMatrix = drawMatrix
+        invalidate()
+    }
+
+
 }

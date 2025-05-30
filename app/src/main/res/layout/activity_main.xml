@@ -89,6 +89,20 @@
                 android:layout_gravity="bottom|start"
                 android:text="Save"
                 android:translationZ="11dp" />
+            <Button
+                android:id="@+id/btnFlip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:text="Flip"
+                android:translationZ="11dp" />
+            <Button
+                android:id="@+id/btnRotate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:text="Rotate"
+                android:translationZ="11dp" />
         </LinearLayout>
     </LinearLayout>
 

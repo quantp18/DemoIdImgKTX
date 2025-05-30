@@ -122,6 +122,22 @@ class MainActivity : AppCompatActivity() {
                 FileUtils.saveBitmapToFile(context = this, bitmap = bitmap)
             }
         }
+
+        viewBinding.btnRotate.setOnClickListener {
+            viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
+                val index = frameInfo.index
+                val clipTransformImageView = frameContentList[index].clipTransformImageView
+                clipTransformImageView.rotateView()
+            }
+        }
+
+        viewBinding.btnFlip.setOnClickListener {
+            viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
+                val index = frameInfo.index
+                val clipTransformImageView = frameContentList[index].clipTransformImageView
+                clipTransformImageView.flipView()
+            }
+        }
     }
 
     fun handleSwapHighlight(indexImageA: Int, indexImageB: Int) {
@@ -160,7 +176,6 @@ class MainActivity : AppCompatActivity() {
         val index = frameInfo.index
         val bitmap = BitmapFactory.decodeFile(file.path)
         val clipView = ClipTransformImageView(this).apply {
-            setLimitRect(RectF(0f, 0f, frameInfo.width, frameInfo.height))
             setImageBitmap(bitmap)
             layoutParams = FrameLayout.LayoutParams(frameInfo.width.toInt(), frameInfo.height.toInt()).apply {
                 leftMargin = frameInfo.x.toInt()
@@ -168,6 +183,7 @@ class MainActivity : AppCompatActivity() {
             }
             z = (10f + index) / 10f
             rotation = frameInfo.rotation
+            setLimitRect(RectF(0f, 0f, frameInfo.width, frameInfo.height))
         }
         frameContentList.add(FrameContent(frameInfo, clipView, file.path))
         viewBinding.main.addView(clipView)
