@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity() {
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private var frameMeta: FramesMeta? = null
     private var pickMediaLauncher: ActivityResultLauncher<String>? = null
+    private var pickMultipleMediaLauncher: ActivityResultLauncher<PickVisualMediaRequest>? = null
     private val frameContentList = mutableMapOf<Int, FrameContent>()
 
     private var frameOverlayViewNewListener: FrameOverlayViewNewListener? = null
@@ -70,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             frameMeta = frameMeta?.copy(frameList = scaledFrames)
             Log.e("TAG", "btnSetFrames: ${scaledFrames.size}")
             viewBinding.imgCenter.setFrameInfos(scaledFrames)
+            onSelectMultipleFromGallery()
         }
         viewBinding.button.text = "Swap"
         viewBinding.button.setOnClickListener {
@@ -113,6 +116,11 @@ class MainActivity : AppCompatActivity() {
         pickMediaLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             Log.e("TAG", "pickMediaLauncher: $uri")
             handlePickMedia(uri)
+        }
+
+        pickMultipleMediaLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia(5)) { uris ->
+            Log.e("TAG", "pickMediaLauncher: $uris")
+            handlePickMultipleMedia(uris)
         }
 
         frameOverlayViewNewListener = object : FrameOverlayViewNewListener {
@@ -223,6 +231,10 @@ class MainActivity : AppCompatActivity() {
         pickMediaLauncher?.launch("image/*")
     }
 
+    private fun onSelectMultipleFromGallery() {
+        pickMultipleMediaLauncher?.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
     private fun handlePickMedia(uri: Uri?) {
         if (uri != null) {
             FileUtils.copyImageFileFromUri(this, uri)?.let { mFile ->
@@ -233,6 +245,24 @@ class MainActivity : AppCompatActivity() {
                     }
                     addFrameByFile(frameInfo, mFile)
                     viewBinding.imgCenter.updateHaveImage(haveImage = true, index = frameInfo.index)
+                }
+            }
+        }
+        isReplacing = false
+    }
+
+    private fun handlePickMultipleMedia(uris: List<Uri>?) {
+        if (uris != null) {
+            uris.forEach { mUri ->
+                FileUtils.copyImageFileFromUri(this, mUri)?.let { mFile ->
+                    if (!mFile.exists()) return
+                    viewBinding.imgCenter.getFrameSelected()?.let { frameInfo ->
+                        if (isReplacing){
+                            deleteByIndex(frameInfo.index)
+                        }
+                        addFrameByFile(frameInfo, mFile)
+                        viewBinding.imgCenter.updateHaveImage(haveImage = true, index = frameInfo.index)
+                    }
                 }
             }
         }
