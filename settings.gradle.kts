@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "DemoIdImgKTX"
 include(":app")
- 
+include(":android-gpuimage-plus")
+include(":cropiwa")

@@ -15,7 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.withRotation
 import com.example.demoidimgktx.R
-import com.example.demoidimgktx.model.FrameInfo
+import com.example.demoidimgktx.data.model.FrameInfo
 import kotlin.math.atan2
 
 class FrameOverlayViewNew @JvmOverloads constructor(

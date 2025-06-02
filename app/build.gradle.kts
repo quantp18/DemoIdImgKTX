@@ -24,11 +24,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -50,4 +50,13 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.1")
     //glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation(project(":android-gpuimage-plus"))
+    implementation(project(":cropiwa"))
+
+    implementation("com.github.siyamed:android-shape-imageview:0.9.3")
+    //Core UI
+    implementation("androidx.activity:activity-ktx:1.10.1")
+    implementation("androidx.fragment:fragment-ktx:1.8.6")
+
 }

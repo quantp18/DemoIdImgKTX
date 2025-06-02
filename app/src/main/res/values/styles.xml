@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="SCBSwitch" parent="@style/Theme.AppCompat.Light">
+        <item name="android:colorForeground">#FFFFFF</item>
+        <item name="colorControlActivated">@color/colorAccent</item>
+        <item name="colorSwitchThumbNormal">#FFFFFF</item>
+    </style>
+
+
+    <style name="mRecyclerTabLayout">
+        <item name="mTabIndicatorHeight">40dp</item>
+        <item name="mTabIndicatorColor">@color/BackgroundColor</item>
+        <item name="mTabMaxWidth">40dp</item>
+        <item name="mTabMinWidth">40dp</item>
+        <item name="mTabPadding">10dp</item>
+        <item name="mTabSelectedTextColor">@color/mainColor</item>
+    </style>
+
+    <style name="mRecyclerTabLayout.Tab" parent="@style/mRecyclerTabLayout">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?android:textColorSecondary</item>
+        <item name="textAllCaps">true</item>
+    </style>
+</resources>

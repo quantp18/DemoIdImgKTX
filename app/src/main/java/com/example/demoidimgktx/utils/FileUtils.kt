@@ -8,7 +8,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
 import android.webkit.MimeTypeMap
-import com.example.demoidimgktx.model.FramesMeta
+import com.example.demoidimgktx.data.model.FramesMeta
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

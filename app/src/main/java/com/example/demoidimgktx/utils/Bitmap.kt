@@ -13,8 +13,8 @@ import androidx.core.graphics.withSave
 import androidx.core.graphics.withScale
 import androidx.core.graphics.withTranslation
 import com.example.demoidimgktx.custom_view.ClipTransformImageView
-import com.example.demoidimgktx.model.FrameInfo
-import com.example.demoidimgktx.model.FramesMeta
+import com.example.demoidimgktx.data.model.FrameInfo
+import com.example.demoidimgktx.data.model.FramesMeta
 
 fun mergeOverlaysBelowImgFg(mainLayout: FrameLayout, imgFg: ImageView): Bitmap? {
     val drawable = imgFg.drawable ?: return null

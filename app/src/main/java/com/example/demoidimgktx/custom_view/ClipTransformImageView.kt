@@ -8,7 +8,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatImageView
-import com.example.demoidimgktx.model.FrameInfo
+import com.example.demoidimgktx.data.model.FrameInfo
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min

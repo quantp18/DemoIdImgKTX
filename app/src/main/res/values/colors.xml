@@ -2,4 +2,12 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="BackgroundCardColor">#6867AC</color>
+    <color name="mainColor">#D22779</color>
+    <color name="colorAccent">@color/mainColor</color>
+    <color name="BackgroundColor">#131313</color>
+    <color name="itemColorBlack">#000000</color>
+    <color name="itemColor">#FFFFFF</color>
+    <color name="tool_background">#303030</color>
+    <color name="tintCol">#6C6C6C</color>
 </resources>

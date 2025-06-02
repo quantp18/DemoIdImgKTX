@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">DemoIdImgKTX</string>
+    <string name="size">Size</string>
+    <string name="radius">Radius</string>
+    <string name="color">Color</string>
+    <string name="background">Background</string>
+    <string name="width">Width</string>
+    <string name="height">Height</string>
+    <string name="texture">Texture</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="brightness">brightness</string>
+    <string name="contrast">contrast</string>
+    <string name="saturation">saturation</string>
+    <string name="hue">hue</string>
+    <string name="sharpen">sharpen</string>
+    <string name="exposure">exposure</string>
 </resources>
